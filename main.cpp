@@ -43,23 +43,28 @@ int main() {
         for (int j = 0; j < cols; ++j) {
             double sum_score = 0.0;
             for (const Eigen::Vector2d &pt: vSeedPts) {
-                double score = 1 / ((Eigen::Vector2d(i, j) - pt).norm() + 1.0);
+                double score = 1 / ((Eigen::Vector2d(i, j) - pt).norm() + 20.0);
                 sum_score += score;
             }
 
             image.at<float>(i, j) = sum_score;
         }
     }
-    cv::namedWindow("image", CV_WINDOW_FULLSCREEN);
-    cv::imshow("image", image);
+//    cv::namedWindow("image", CV_WINDOW_FULLSCREEN);
+//    cv::imshow("image", image);
+    double min_value;
+    double max_value;
+    cv::minMaxIdx(image, &min_value, &max_value);
 //    cv::imwrite("/home/lightol/Desktop/image.png", image);
 
-//    cv::Mat image_gray(image.size(), CV_8UC1);
+    cv::Mat image_gray(image.size(), CV_8UC1);
+//    cv::Mat image_gray;
+    cv::convertScaleAbs(image, image_gray, 255 / max_value);
 //    cv::normalize(image, image_gray, 0, 255, cv::NORM_MINMAX);
-//    cv::imshow("gray", image_gray);
+    cv::imshow("gray", image_gray);
 
-//    cv::Mat heatmap;
-//    cv::applyColorMap(image_gray, heatmap, cv::COLORMAP_JET);
-//    cv::imshow("heatmap image", heatmap);
+    cv::Mat heatmap;
+    cv::applyColorMap(image_gray, heatmap, cv::COLORMAP_JET);
+    cv::imshow("heatmap image", heatmap);
     cv::waitKey();
 }
